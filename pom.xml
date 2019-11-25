@@ -16,6 +16,11 @@
 
     <properties>
         <java.version>1.8</java.version>
+        <skipTests>true</skipTests>
+        <dockerfile-maven-version>1.4.13</dockerfile-maven-version>
+        <docker.exec.skip>true</docker.exec.skip> <!-- to enable use command $mvn dockerfile:build -Ddocker.exec.skip=false -->
+        <jar-with-dependencies.exec.skip>true</jar-with-dependencies.exec.skip> <!-- to enable use command $mvn dockerfile:build -Djar-with-dependencies.exec.skip=false -->
+        <docker.image.prefix>${project.groupId}</docker.image.prefix>
     </properties>
 
     <dependencies>
@@ -72,6 +77,35 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                            <goal>build-info</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+            </plugin>
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>1.4.13</version>
+                <configuration>
+                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
+                    <skip>${docker.exec.skip}</skip> <!-- to enable use command $mvn dockerfile:build -Ddocker.exec.skip=false -->
+                    <buildArgs>
+                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
         <finalName>inventory-app-docker</finalName>
