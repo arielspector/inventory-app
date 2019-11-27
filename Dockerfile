@@ -1,4 +1,4 @@
-FROM openjdk:8-windowsservercore 
+FROM openjdk:8-jdk-alpine
 VOLUME c:/dockerdata
 ARG JAR_FILE 
 COPY ${JAR_FILE} app.jar
